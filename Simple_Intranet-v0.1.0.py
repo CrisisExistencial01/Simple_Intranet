@@ -115,17 +115,32 @@ class Admin:
                 opt = input("¿Que desea modificar?\n(1) Rut\n(2) Nombre\n(3) Rol")
                 if opt == "1":
                     Intranet.users[search][0] = input("Ingrese el nuevo rut: ")
+                    if isinstance(Intranet.user, Estudiante):
+                        Intranet.estudiantes[search][0] = Intranet.users[search][0]
+                    elif isinstance(Intranet.user, Profesor):
+                        Intranet.profesores[search][0] = Intranet.users[search][0]
+
                 elif opt == "2":
                     Intranet.users[search][1] = input("Ingrese el nuevo nombre: ")
+                    if isinstance(Intranet.user, Estudiante):
+                        Intranet.estudiantes[search][1] = Intranet.users[search][1]
+                    elif isinstance(Intranet.user, Profesor):
+                        Intranet.profesores[search][1] = Intranet.users[search][1]
                 elif opt == "3":
-                    Intranet.users[search][2] = input("Ingrese el nuevo rol: ")
+                    Intranet.users[search][3] = input("Ingrese el nuevo rol: ")
+                    if isinstance(Intranet.user, Estudiante):
+                        Intranet.estudiantes[search][3] = Intranet.users[search][3]
+
+                    elif isinstance(Intranet.user, Profesor):
+                        Intranet.profesores[search][3] = Intranet.users[search][3]
                 Intranet.saveList(path_Usuarios, Intranet.users)
+                print(f"[{color.OKGREEN}*{color.RESET}] Usuario modificado exitosamente")
             else:
-                print("Operación cancelada")
+                print(f"[{color.FAIL}*{color.RESET}] Operación cancelada")
 
     def menu(self, Intranet):
         while True:
-            opt = int(input("(1) Agregar un Usuario\n(2) Eliminar un Usuario\n(3) Modificar un Usuario\n(4) Salir\n:"))
+            opt = int(input("(1) Agregar un Usuario\n(2) Eliminar un Usuario\n(3) Modificar un Usuario\n(4) Ver Usuarios\n(0) Salir\n:"))
             if opt == 1:
                 self.addUser()
             elif opt == 2:
@@ -134,12 +149,12 @@ class Admin:
                 self.modifyUser(Intranet)
             elif opt == 4:
                 for i in Intranet.users:
-                    print(f"RUT: {i[0]}\nNOMBRE: {i[1]}\nROL: {i[2]}")
-            elif opt == 4:
+                    print(f"RUT: {color.BOLD}{i[0]}{color.RESET}\nNOMBRE: {i[2]}\nROL: {i[3]}\n")
+            elif opt == 0:
                 intranet.logout()
                 break
             else:
-                print("Opcion no valida, intente nuevamente")
+                print(f"[{color.FAIL}*{color.RESET}] Opcion no valida, intente nuevamente")
 
             
         
@@ -160,7 +175,24 @@ class Estudiante:
     # Ramo es el indice del ramo
     def botarRamo(self, index):
         self.ramos.remove[ramo]
-
+    def verRamos(self):
+        for i in self.ramos:
+            print(f"CODIGO: {color.BOLD}{i[0]}{color.RESET}\nNOMBRE: {i[1]}\nMODULOS: {i[2]}\n")
+    def menu(self, Intranet):
+        while True:
+            print(f"Bienvenido {color.BOLD}{self.nombre}{color.RESET}!\n")
+            opt = int(input("(1) Ver ramos inscritos\n(2) Inscribir ramo\n(3) Botar ramo\n(0) Salir\n:"))
+            if opt == 1:
+                self.verRamos()
+            elif opt == 2:
+                self.inscribirRamo()
+            elif opt == 3:
+                self.botarRamo()
+            elif opt == 0:
+                Intranet.logout()
+                break
+            else:
+                print(f"[{color.FAIL}*{color.RESET}] Opcion no valida, intente nuevamente")
 class Ramo:
     # datos es una tupla con (Codigo, modulos asociados)
     def __init__(self, datos, cantidadNotas):
@@ -240,7 +272,7 @@ class App:
 
     def run(self):
         manager = Admin()
-        print(self.users)
+        #print(self.users)
         while True:
             print("------------- Simple Intranet! --------------\n")
             opt = int(input("(1) Iniciar Sesion\n(2) Salir\n:"))
@@ -250,7 +282,7 @@ class App:
                      self.user.menu(self)
 
                 else:
-                    self.user.menu()
+                    self.user.menu(self)
             elif opt == 2:
                 print(f"[{color.OKGREEN}*{color.RESET}] {color.BLUE} Saliendo...{color.RESET}")
                 break

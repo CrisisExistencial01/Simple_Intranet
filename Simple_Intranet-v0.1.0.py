@@ -48,7 +48,7 @@ class Admin:
             data = (rut, nombre, l[0:])
             self.save(path_Estudiantes, data)
         elif rol == "2":
-            user = (rut, rut, nombre, "Profesor", l)
+            user = (rut, rut, nombre, "Profesor")
             data = (rut, nombre, l[0:])
             self.save(path_Profesores, data)
         else:
@@ -65,14 +65,10 @@ class Admin:
         rut = input("Ingrese el rut del usuario a eliminar: ")
         search = self.find(rut, Intranet.users)
         if search == None:
-            print(f"[{color.FAIL}*color.RESET] Usuario no encontrado :/")
+            print(f"[{color.FAIL}*{color.RESET}] Usuario no encontrado :/")
         else:
             confirm = input(f"[{color.OKGREEN}*{color.RESET}] Se ha encontrado al usuario {color.BOLD}{rut}{color.RESET}\nDesea removerlo del sistema? s/n: ")
-            """
-            print("confirm: ", confirm)
-            print("confirm.lower: ", confirm.lower())
-            print("confirm.lower == 's': ", confirm.lower() == 's')
-            """
+
             if confirm.lower() == 's':
                 print("DEBUG: Eliminación de usuario")
                 # Eliminar el usuario de los archivos Estudiantes.csv o Profesores.csv
@@ -114,7 +110,7 @@ class Admin:
         if search == None:
             print("Usuario no encontrado :/")
         else:
-            confirm = input(f"Se ha encontrado al usuario {rut}, desea modificarlo? s/n: ")
+            confirm = input(f"Se ha encontrado al usuario {color.BOLD}{rut}{color.RESET}, desea modificarlo? s/n: ")
             if confirm.lower == "s":
                 opt = input("¿Que desea modificar?\n(1) Rut\n(2) Nombre\n(3) Rol")
                 if opt == "1":
@@ -126,12 +122,34 @@ class Admin:
                 Intranet.saveList(path_Usuarios, Intranet.users)
             else:
                 print("Operación cancelada")
+
+    def menu(self, Intranet):
+        while True:
+            opt = int(input("(1) Agregar un Usuario\n(2) Eliminar un Usuario\n(3) Modificar un Usuario\n(4) Salir\n:"))
+            if opt == 1:
+                self.addUser()
+            elif opt == 2:
+                self.delUser(Intranet)
+            elif opt == 3:
+                self.modifyUser(Intranet)
+            elif opt == 4:
+                for i in Intranet.users:
+                    print(f"RUT: {i[0]}\nNOMBRE: {i[1]}\nROL: {i[2]}")
+            elif opt == 4:
+                intranet.logout()
+                break
+            else:
+                print("Opcion no valida, intente nuevamente")
+
+            
+        
 class Profesor:
     def __init__(self, rut, nombre, ramos):
         pass
     def modificarNota(self, estudiante, ramo, notas):
         # notas debe ser una tupla de la forma: (cualNota, valorNota)
         pass
+
 class Estudiante:
     def __init__(self, rut, nombre, ramos):
         self.rut = rut
@@ -142,6 +160,7 @@ class Estudiante:
     # Ramo es el indice del ramo
     def botarRamo(self, index):
         self.ramos.remove[ramo]
+
 class Ramo:
     # datos es una tupla con (Codigo, modulos asociados)
     def __init__(self, datos, cantidadNotas):
@@ -165,7 +184,7 @@ class App:
         estudiantes = []
         with open(path_Estudiantes, newline='') as csvfile:
             reader = csv.reader(csvfile)
-            next(reader)  # Saltar la primera fila de encabezados
+            # next(reader)  # Saltar la primera fila de encabezados
             for row in reader:
                 rut = row[0]
                 nombre = row[1]
@@ -185,6 +204,7 @@ class App:
                 profesor = Profesor(rut, nombre, ramos)
                 profesores.append(profesor)
         return profesores
+
     def login(self):
         rut = input("Ingrese su rut: ")
         passwd = getpass.getpass("Ingrese su contraseña: ") # Asi la contraseña no se ve :D
@@ -195,57 +215,44 @@ class App:
                 if user[0] == rut and user[1] == passwd:
                     self.rut = rut
                     self.passwd = passwd
-                    if user[2] == "Estudiante":
-                        print("DEBUG: Estudiante")
-                        self.user = self.makeEstudiante(user[0], user[1], user[3:])
-                    elif user[2] == "Profesor":
+                    if user[3] == "Estudiante":
+                        self.user = self.makeEstudiante(user[0], user[1], user[4:])
+                    elif user[3] == "Profesor":
                         print("DEBUG: Profesor")
                         self.user = self.makeProfesor(user[0], user[1], user[3:])
                     break
             if self.user == None: # Si no se encuentra el usuario
                 self.clear()
                 print("Usuario o contraseña incorrectos :(")
+
     def logout(self):
         self.rut = None
         self.passwd = None
+    
     def makeEstudiante(self, rut, nombre, ramos):
         self.user = Estudiante(rut, nombre, ramos) # Se crea un objeto estudiante
+
     def makeProfesor(self, rut, nombre, ramos):
         self.user = Profesor(rut, nombre, ramos)
+
     def clear(self): # Función para limpiar la pantalla
         os.system('cls' if os.name == 'nt' else 'clear')
-    def adminMenu(self):
-        while self.user != None:
-            opt = int(input("(1) Agregar un Usuario\n(2) Eliminar un Usuario\n(3) Modificar un Usuario\n(4) Salir\n:"))
-            if opt == 1:
-                self.user.addUser()
-            elif opt == 2:
-                self.user.delUser(self)
-            elif opt == 3:
-                self.user.modifyUser(self)
-            elif opt == 4:
-                self.logout()
-                break
-            else:
-                print("Opcion no valida, intente nuevamente")
+
     def run(self):
         manager = Admin()
         print(self.users)
         while True:
-            print("-------------Simple Intranet!--------------\n")
+            print("------------- Simple Intranet! --------------\n")
             opt = int(input("(1) Iniciar Sesion\n(2) Salir\n:"))
             if opt == 1:
                 self.login()
                 if isinstance(self.user, Admin):
-                        print("Bienvenido, Admin!!\n¿Que puedo hacer por ti? :D")
-                        self.adminMenu()
-                        self.clear()
-                elif isinstance(self.user, Estudiante):
-                    print("Bienvenido, Estudiante!!")
-                elif isinstance(self.user, Profesor):
-                    print("Bienvenido, Profesor!!")
+                     self.user.menu(self)
+
+                else:
+                    self.user.menu()
             elif opt == 2:
-                print(f"[{color.OKGREEN}*{color.RESET}] {color.BLUE}Saliendo...{color.RESET}")
+                print(f"[{color.OKGREEN}*{color.RESET}] {color.BLUE} Saliendo...{color.RESET}")
                 break
             else:
                 print("Opcion no valida, intente nuevamente")

@@ -45,6 +45,21 @@ class Profesor:
     def modificarNota(self, estudiante, ramo, notas):
         # notas debe ser una tupla de la forma: (cualNota, valorNota)
         pass
+    def verNotasmodulo():
+    	with open(path_Profesores, 'r') as lectura:
+    	 
+    def verRamos():
+    	with open(path_profesores,'r') as lectura:
+    	  leer=csv.reader(lectura)
+    	  
+    def modNotasEstudiante():
+    
+    def verAlumnoMod():
+    	with open(path_Profesores,'r') as lectura:
+    	
+    
+    
+    	
 class Estudiante:
     def __init__(self, rut, nombre, ramos):
         self.ramos = ramos
@@ -135,6 +150,39 @@ class App:
             elif opt == 2:
                 print("Saliendo...")
                 break
+    def menu_Profesor:
+      while True:
+    	menuPP=input("(1)\n modificar una nota\n (2) ver notas por modulo\n (3) ver ramos\n (4) modificar notas de estudiante\n (5) ver alumnos por modulo\n (6) salir")
+    	if menuPP==1:
+    	  modificarNota()
+    	elif menuPP==2:
+    	  verNotasModulo()
+    	elif menuPP==3:
+    	  verRamos()
+    	elif menuPP==4:
+    	  modNotasEstudiante()
+    	elif menuPP==5:
+    	  verAlumnoMod()
+    	elif menu==6:
+    	  break
+    	else: 
+    	  print("opción invalida")
+    	  
+   def menu_Estudiante:
+   	while True:
+   	  menuEE=input("(1) ver notas por modulo\n (2) ver ramos inscrito\n (3) inscribir ramos\n (4) botar ramos\n (5) salir")
+   	  if menuEE==1:
+   	    verNotasM()
+   	  elif menuEE==2:
+   	    verRamos()
+   	  elif menuEE==3:
+   	    incribirRamos()
+   	  elif menuEE==4:
+   	    botarRamos()
+   	  elif menuEE==5:
+   	    break
+   	  else:
+   	    print("opción invalida")
 
 intranet = App()
 intranet.run()

@@ -38,7 +38,7 @@ class Admin:
             else:
                 print(f"[{color.FAIL}*{color.RESET}]Operación cancelada")
 
-    def addUser(self):
+    def addUser(self, Intranet):
         rut = input("Rut del nuevo usuario: ")
         nombre = input("Nombre del nuevo usuario: ")
         rol = input("Seleccione el tipo de usuario: \n(1) Estudiante\n(2) Profesor: ")
@@ -46,14 +46,16 @@ class Admin:
         if rol == "1":
             user = (rut, rut, nombre, "Estudiante")
             data = (rut, nombre, l[0:])
+            Intranet.estudiantes.append(data)
             self.save(path_Estudiantes, data)
         elif rol == "2":
             user = (rut, rut, nombre, "Profesor")
             data = (rut, nombre, l[0:])
+            Intranet.profesores.append(data)
             self.save(path_Profesores, data)
         else:
             print("Opción no válida, intente nuevamente")
-        
+        Intranet.users.append(user)
         self.save(path_Usuarios, user)
         print("Usuario agregado exitosamente")
     def find(self, rut, lista):
@@ -74,14 +76,14 @@ class Admin:
                 # Eliminar el usuario de los archivos Estudiantes.csv o Profesores.csv
                 if Intranet.users[search][3] == "Estudiante":
                     print("DEGUG: Eliminando estudiante")
-                    Intranet.estudiantes.pop(search)
-
+                    coincidencia = self.find(rut, Intranet.estudiantes)
+                    Intranet.estudiantes.pop(coincidencia)
                     self.saveList(path_Estudiantes, Intranet.estudiantes)
 
                 elif Intranet.users[search][3] == "Profesor":
                     print("DEGUG: Eliminando profesor")
-                    profesor_indice = search
-                    Intranet.profesores.pop(profesor_indice)
+                    coincidencia = self.find(rut, Intranet.profesores)
+                    Intranet.profesores.pop(coincidencia)
                     self.saveList(path_Profesores, Intranet.profesores)
                 else:
                     print(f"[{color.FAIL}*{color.RESET}] Error al eliminar el usuario de los archivos de usuarios")
@@ -156,8 +158,6 @@ class Admin:
             else:
                 print(f"[{color.FAIL}*{color.RESET}] Opcion no valida, intente nuevamente")
 
-            
-        
 class Profesor:
     def __init__(self, rut, nombre, ramos):
         pass
@@ -278,11 +278,8 @@ class App:
             opt = int(input("(1) Iniciar Sesion\n(2) Salir\n:"))
             if opt == 1:
                 self.login()
-                if isinstance(self.user, Admin):
-                     self.user.menu(self)
+                self.user.menu(self)
 
-                else:
-                    self.user.menu(self)
             elif opt == 2:
                 print(f"[{color.OKGREEN}*{color.RESET}] {color.BLUE} Saliendo...{color.RESET}")
                 break

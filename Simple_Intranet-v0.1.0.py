@@ -58,9 +58,9 @@ class Admin:
         Intranet.users.append(user)
         self.save(path_Usuarios, user)
         print("Usuario agregado exitosamente")
-    def find(self, rut, lista):
+    def find(self, parametro, lista):
         for i in lista:
-            if i[0] == rut:
+            if i[0] == parametro:
                 return lista.index(i)
         return None
     def delUser(self, Intranet): # users es la lista cargada en App.users

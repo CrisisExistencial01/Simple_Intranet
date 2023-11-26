@@ -190,7 +190,7 @@ class Profesor:
                 return
         print("Ramo no encontrado")
 
-    def menuP (self, Intranet):
+    def menu(self, Intranet):
         while True:
             print(f"Bienvenido {color.BOLD}{self.nombre}{color.RESET}!\n")
             opc = int(input("(1) Ver ramos\n(2) Ver notas por modulo\n(3) Modificar nota\n(4) Salir\n:"))

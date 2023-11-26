@@ -160,10 +160,58 @@ class Admin:
 
 class Profesor:
     def __init__(self, rut, nombre, ramos):
+        self.rut = rut
+        self.nombre = nombre
+        self.ramos = ramos
+
+    def verNotasModulo(self, modulo):
         pass
-    def modificarNota(self, estudiante, ramo, notas):
+
+    def verRamos(self):
+        for i in self.ramos:
+            print(f"CODIGO: {color.BOLD}{i[0]}{color.RESET}\nNOMBRE: {i[1]}\nMODULOS: {i[2]}\n")
+            pass   
+    
+    def modificarNota(self, rute, ramoc, notas):
         # notas debe ser una tupla de la forma: (cualNota, valorNota)
         pass
+        for ramo in self.ramos:
+            if ramo[] == ramoc:
+                for estudiante in ramo[]:
+                    if estudiante[] == rute:
+                        for i, nota in enumerate(estudiante[]):
+                            if nota[] == notas[]:
+                                estudiante[i][] = notas
+                                print("Nota modificada exitosamente")
+                                return
+                        print("Nota no encontrada")
+                        return
+                print("Estudiante no encontrado")
+                return
+        print("Ramo no encontrado")
+
+    def menuP (self, Intranet):
+        while True:
+            print(f"Bienvenido {color.BOLD}{self.nombre}{color.RESET}!\n")
+            opc = int(input("(1) Ver ramos\n(2) Ver notas por modulo\n(3) Modificar nota\n(4) Salir\n:"))
+            if opc == 1:
+                self.verRamos()
+            elif opc == 2:
+                modulo = input("Ingrese el módulo para ver notas: ")
+                self.verNotasModulo(modulo)
+            elif opc == 3:
+                rute = input("Ingrese el rut del estudiante: ") 
+                ramoc = input("Ingrese el codigo del ramo: ")
+                cualNota = input("Ingrese la nota a modificar: ")
+                valorNota = input("Ingrese el nuevo valor de la nota: ")
+                notas = (cualNota, valorNota)
+                self.modificarNota(rute, ramoc, notas)
+                print("Nota modificada exitosamente")
+            elif opc == 4:
+                Intranet.logout()
+                break
+            else:
+                print(f"[{color.FAIL}*{color.RESET}] Opcion no valida, intente nuevamente")
 
 class Estudiante:
     def __init__(self, rut, nombre, ramos):

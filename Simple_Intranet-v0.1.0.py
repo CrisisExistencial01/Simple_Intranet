@@ -8,6 +8,7 @@ path_Estudiantes = 'Data/Users/Estudiantes.csv'
 
 path_RamosEstudiantes = 'Data/Ramos/RamosEstudiantes.csv'
 path_RamosProfesores = 'Data/Ramos/RamosProfesores.csv'
+path_Ramos = 'Data/Ramos/Ramos.csv'
 # Colores AESTHETIC u.u
 class color:
     HEADER = '\033[95m'
@@ -22,24 +23,26 @@ class color:
 class Admin:
     def addRamo(self):
         codigo = input("Ingrese el codigo del ramo: ")
-        nombre = input("Ingrese el nombre del ramo: ")
-        modulos = input("Ingrese los modulos del ramo: ")
-        data = (codigo, nombre, modulos)
-        self.save(path_Ramos, data)
-        print("Ramo agregado exitosamente")
+        ramos = self.loadFile(path_Ramos)
+        search = self.find(codigo, ramos)
+        if search != None:
+            print("El ramo ya existe :/")
+        else:    
+            nombre = input("Ingrese el nombre del ramo: ")
+            cantmodulos = input("Ingrese la cantidad de modulos del ramo: ")
+            data = (codigo, nombre, cantmodulos)
+            self.save(path_Ramos, data)
+            print(f"[{color.OKGREEN}*{color.RESET}] Ramo agregado exitosamente")
     def delRamo(self, Intranet):
         codigo = input("Ingrese el codigo del ramo a eliminar: ")
-        search = self.find(codigo, Intranet.ramos)
-        if search == None:
-            print("Ramo no encontrado :/")
-        else:
-            confirm = input(f"Se ha encontrado al ramo {codigo}: {Intranet.ramos[search][1]}\n[{color.WARNING}*{color.RESET}] Desea eliminarlo? s/n: ")
-            if confirm.lower == "s":
-                Intranet.ramos.pop(search)
-                self.saveList(path_Ramos, Intranet.ramos)
-                print(f"[{color.OKGREEN}*{color.RESET}] Ramo eliminado exitosamente")
-            else:
-                print(f"[{color.FAIL}*{color.RESET}]Operación cancelada")
+        #ramos = self.loadFile(path_Ramos)
+        for i in ramos:
+            if i[0] == codigo:
+                ramos.pop(i)
+                Intranet.ramos.pop(i)
+                break
+        self.delete(path_Ramos, Intranet.ramos)
+        print(f"[{color.OKGREEN}*{color.RESET}] Ramo eliminado exitosamente")
 
     def addUser(self, Intranet):
         rut = input("Rut del nuevo usuario: ")
@@ -60,7 +63,7 @@ class Admin:
             print("Opción no válida, intente nuevamente")
         Intranet.users.append(user)
         self.save(path_Usuarios, user)
-        print("Usuario agregado exitosamente")
+        print(f"[{color.OKGREEN}*{color.RESET}]Usuario agregado exitosamente")
     def find(self, parametro, lista):
         for i in lista: # i es una tupla
             if i[0] == parametro:
@@ -73,15 +76,13 @@ class Admin:
     def delUser(self, Intranet): # users es la lista cargada en App.users
         rut = input("Ingrese el rut del usuario a eliminar: ")
         search = self.find(rut, Intranet.users)
-        search2 = self.findInObject(rut, Intranet.estudiantes)
-        print(search, Intranet.users[search], search2, Intranet.estudiantes[search2].rut)
-        if search == None:
+        # search2 = self.findInObject(rut, Intranet.estudiantes)
+        if search == None :
             print(f"[{color.FAIL}*{color.RESET}] Usuario no encontrado :/")
         else:
             confirm = input(f"[{color.OKGREEN}*{color.RESET}] Se ha encontrado al usuario {color.BOLD}{rut}{color.RESET}\nDesea removerlo del sistema? s/n: ")
 
             if confirm.lower() == 's':
-                print("DEBUG: Eliminación de usuario")
                 # Eliminar el usuario de los archivos Estudiantes.csv o Profesores.csv
                 if Intranet.users[search][3] == "Estudiante":
                     print("DEGUG: Eliminando estudiante")
@@ -91,7 +92,7 @@ class Admin:
 
                 elif Intranet.users[search][3] == "Profesor":
                     print("DEGUG: Eliminando profesor")
-                    coincidencia = self.find(rut, Intranet.profesores)
+                    coincidencia = self.findInObject(rut, Intranet.profesores)
                     Intranet.profesores.pop(coincidencia)
                     self.saveList(path_Profesores, Intranet.profesores)
                 else:
@@ -115,11 +116,28 @@ class Admin:
             writer = csv.writer(f)
             for i in data:
                 writer.writerow(i)
+    # Elimina un dato de un archivo csv
+    def delete(self, path, data):
+        # Elimina un dato de un archivo csv
+        l = self.loadFile(path)
+        # l es la lista de tuplas retornadas por loadFile()
+        for ramo in l:
+            if ramo == data:
+                l.pop(ramo)
+        self.saveList(path, l)
+    # Carga un archivo csv y lo retorna como una lista
+    def loadFile(self, path):
+        DATA = []
+        with open(path, newline='') as csvfile:
+            reader = csv.reader(csvfile)
+            for row in reader:
+                DATA.append(row)
+        return DATA
     def modifyUser(self, Intranet):
         rut = input("Ingrese el rut del usuario a modificar: ")
         search = self.find(rut, Intranet.users)
         if search == None:
-            print("Usuario no encontrado :/")
+            print(f"[{color.FAIL}*{color.RESET}]Usuario no encontrado :/")
         else:
             confirm = input(f"Se ha encontrado al usuario {color.BOLD}{rut}{color.RESET}, desea modificarlo? s/n: ")
             if confirm.lower == "s":
@@ -151,7 +169,7 @@ class Admin:
 
     def menu(self, Intranet):
         while True:
-            opt = int(input("(1) Agregar un Usuario\n(2) Eliminar un Usuario\n(3) Modificar un Usuario\n(4) Ver Usuarios\n(0) Salir\n:"))
+            opt = int(input("(1) Agregar un Usuario\n(2) Eliminar un Usuario\n(3) Modificar un Usuario\n(4) Ver Usuarios\n(5) Agregar Ramos\n(6) Eliminar Ramos\n(7) Ver Ramos\n(0) Salir\n:"))
             if opt == 1:
                 self.addUser()
             elif opt == 2:
@@ -161,6 +179,14 @@ class Admin:
             elif opt == 4:
                 for i in Intranet.users:
                     print(f"RUT: {color.BOLD}{i[0]}{color.RESET}\nNOMBRE: {i[2]}\nROL: {i[3]}\n")
+            elif opt == 5:
+                self.addRamo()
+            elif opt == 6:
+                self.delRamo(Intranet)
+            elif opt == 7:
+                ramos = self.loadFile(path_Ramos)
+                for i in ramos:
+                    print(f"CODIGO: {color.BOLD}{i[0]}{color.RESET}\nNOMBRE: {i[1]}\nMODULOS: {i[2]}\n")
             elif opt == 0:
                 intranet.logout()
                 break
@@ -299,16 +325,20 @@ class App:
         if rut == "ADMIN" and passwd == "NIMDA":
             self.user = Admin()
         else:
+            admin = Admin()
             for user in self.users:
                 if user[0] == rut and user[1] == passwd:
                     self.rut = rut
                     self.passwd = passwd
                     if user[3] == "Estudiante":
-                        self.user = self.makeEstudiante(user[0], user[1], user[4:])
+                        self.user = Estudiante(rut, user[2], user[4:])
                     elif user[3] == "Profesor":
-                        print("DEBUG: Profesor")
+                        search = admin.findInObject(rut, self.profesores)
                         self.user = self.makeProfesor(user[0], user[1], user[3:])
                     break
+                else:
+                    self.user = None
+
             if self.user == None: # Si no se encuentra el usuario
                 self.clear()
                 print("Usuario o contraseña incorrectos :(")
@@ -327,14 +357,19 @@ class App:
         os.system('cls' if os.name == 'nt' else 'clear')
 
     def run(self):
+        self.clear()
         manager = Admin()
         #print(self.users)
+        ramos = manager.loadFile(path_Ramos)
         while True:
             print("------------- Simple Intranet! --------------\n")
             opt = int(input("(1) Iniciar Sesion\n(2) Salir\n:"))
             if opt == 1:
-                self.login()
+                while self.user == None:
+                    self.login()
+                #if self.user != None:
                 self.user.menu(self)
+                #self.clear()
 
             elif opt == 2:
                 print(f"[{color.OKGREEN}*{color.RESET}] {color.BLUE} Saliendo...{color.RESET}")

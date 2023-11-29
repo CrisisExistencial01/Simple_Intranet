@@ -5,6 +5,9 @@ import getpass # Para ingresar contraseñas :D
 path_Usuarios = 'Data/Users/Users.csv'
 path_Profesores = 'Data/Users/Profesores.csv'
 path_Estudiantes = 'Data/Users/Estudiantes.csv'
+
+path_RamosEstudiantes = 'Data/Ramos/RamosEstudiantes.csv'
+path_RamosProfesores = 'Data/Ramos/RamosProfesores.csv'
 # Colores AESTHETIC u.u
 class color:
     HEADER = '\033[95m'
@@ -59,13 +62,19 @@ class Admin:
         self.save(path_Usuarios, user)
         print("Usuario agregado exitosamente")
     def find(self, parametro, lista):
-        for i in lista:
+        for i in lista: # i es una tupla
             if i[0] == parametro:
                 return lista.index(i)
         return None
+    def findInObject(self, parametro, lista):
+        for i in lista:
+            if i.rut == parametro:
+                return lista.index(i)
     def delUser(self, Intranet): # users es la lista cargada en App.users
         rut = input("Ingrese el rut del usuario a eliminar: ")
         search = self.find(rut, Intranet.users)
+        search2 = self.findInObject(rut, Intranet.estudiantes)
+        print(search, Intranet.users[search], search2, Intranet.estudiantes[search2].rut)
         if search == None:
             print(f"[{color.FAIL}*{color.RESET}] Usuario no encontrado :/")
         else:
@@ -76,7 +85,7 @@ class Admin:
                 # Eliminar el usuario de los archivos Estudiantes.csv o Profesores.csv
                 if Intranet.users[search][3] == "Estudiante":
                     print("DEGUG: Eliminando estudiante")
-                    coincidencia = self.find(rut, Intranet.estudiantes)
+                    coincidencia = self.findInObject(rut, Intranet.estudiantes)
                     Intranet.estudiantes.pop(coincidencia)
                     self.saveList(path_Estudiantes, Intranet.estudiantes)
 
@@ -174,14 +183,13 @@ class Profesor:
     
     def modificarNota(self, rute, ramoc, notas):
         # notas debe ser una tupla de la forma: (cualNota, valorNota)
-        pass
         for ramo in self.ramos:
-            if ramo[] == ramoc:
-                for estudiante in ramo[]:
-                    if estudiante[] == rute:
-                        for i, nota in enumerate(estudiante[]):
-                            if nota[] == notas[]:
-                                estudiante[i][] = notas
+            if ramo == ramoc:
+                for estudiante in ramo:
+                    if estudiante == rute:
+                        for i, nota in enumerate(estudiante):
+                            if nota == notas:
+                                estudiante[i][nota] = notas
                                 print("Nota modificada exitosamente")
                                 return
                         print("Nota no encontrada")

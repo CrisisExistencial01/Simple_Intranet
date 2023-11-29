@@ -26,7 +26,7 @@ class Admin:
         ramos = self.loadFile(path_Ramos)
         search = self.find(codigo, ramos)
         if search != None:
-            print("El ramo ya existe :/")
+            print(f"[{color.FAIL}*{color.RESET}]El ramo ya existe :/")
         else:    
             nombre = input("Ingrese el nombre del ramo: ")
             cantmodulos = input("Ingrese la cantidad de modulos del ramo: ")
@@ -35,13 +35,14 @@ class Admin:
             print(f"[{color.OKGREEN}*{color.RESET}] Ramo agregado exitosamente")
     def delRamo(self, Intranet):
         codigo = input("Ingrese el codigo del ramo a eliminar: ")
-        #ramos = self.loadFile(path_Ramos)
+        ramos = self.loadFile(path_Ramos)
         for i in ramos:
             if i[0] == codigo:
-                ramos.pop(i)
-                Intranet.ramos.pop(i)
+                search = ramos.index(i)
+                ramos.pop(search)
+                #Intranet.ramos.pop(search)
                 break
-        self.delete(path_Ramos, Intranet.ramos)
+        self.delete(path_Ramos, ramos)
         print(f"[{color.OKGREEN}*{color.RESET}] Ramo eliminado exitosamente")
 
     def addUser(self, Intranet):
@@ -331,13 +332,20 @@ class App:
                     self.rut = rut
                     self.passwd = passwd
                     if user[3] == "Estudiante":
-                        self.user = Estudiante(rut, user[2], user[4:])
+                        for e in self.estudiantes:
+                            if e.rut == rut:
+                                search = admin.findInObject(rut, self.estudiantes)
+                                #self.user = self.makeEstudiante(user[0], user[1], user[3:])
+                                self.user = e
+                                break
                     elif user[3] == "Profesor":
                         search = admin.findInObject(rut, self.profesores)
-                        self.user = self.makeProfesor(user[0], user[1], user[3:])
+                        for p in self.profesores:
+                            if p.rut == rut:
+                                self.user = p
                     break
                 else:
-                    self.user = None
+                    self.logout()
 
             if self.user == None: # Si no se encuentra el usuario
                 self.clear()
@@ -346,6 +354,7 @@ class App:
     def logout(self):
         self.rut = None
         self.passwd = None
+        self.user = None
     
     def makeEstudiante(self, rut, nombre, ramos):
         self.user = Estudiante(rut, nombre, ramos) # Se crea un objeto estudiante

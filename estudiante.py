@@ -1,4 +1,4 @@
-import admin
+import Admin
 import Innotes.color as color
 manager = admin.Admin()
 class Estudiante:

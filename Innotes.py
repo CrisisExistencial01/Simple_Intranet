@@ -1,5 +1,5 @@
 import csv
-from admin import Admin
+from Admin import Admin
 
 # PATHS
 path_Usuarios = "Data/Users/Users.csv"
@@ -17,7 +17,7 @@ class color:
     BOLD = '\033[1m'
     UNDERLINE = '\033[4m'
     def printOK(self, texto):
-        print(f"[{col.or.OKGREEN}*{color.RESET}] {texto}")
+        print(f"[{color.OKGREEN}*{color.RESET}] {texto}")
     def printFail(self, texto):
         print(f"[{color.FAIL}*{color.RESET}] {texto}")
     def printWarning(self, texto):
@@ -28,7 +28,7 @@ class color:
         return f"{color.BOLD}{texto}{color.RESET}"
 
 class App:
-    def __init__():
+    def __init__(self):
         # Variables utiles
         self.user = None
         self.manager = Admin()
@@ -62,4 +62,4 @@ class App:
                     elif self.user[2] == "Profesor":
                         self.profesor()
                 else:
-                    printFail("Usuario o contraseña incorrecta")
+                    print("Usuario o contraseña incorrecta")

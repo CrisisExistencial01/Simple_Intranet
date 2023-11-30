@@ -112,29 +112,56 @@ class Admin:
         rut = input("Ingrese el rut del usuario a actualizar: ")
         user = self.find(rut, Intranet.users)
         if user == None:
-            print(f"[{color.FAIL}*{color.RESET}] Usuario no encontrado")
+            color.printFail("Usuario no encontrado")
         else:
             opt = int(input("Seleccione el dato a actualizar: \n(1) Rut\n(2) Nombre: \n(3)contraseña:\n(4) Tipo de usuario: "))
             if opt == 1:
-                rut = input("Ingrese el nuevo rut del usuario: ")
-                Intranet.users[user][0] = rut
-                self.saveList(path_Usuarios, Intranet.users)
-                
-                print(f"[{color.OKGREEN}*{color.RESET}] Usuario actualizado exitosamente")
+                nuevo_rut = input("Ingrese el nuevo rut del usuario: ")
+                if Intranet.users[user][3] == "Estudiante":
+                    ans = self.update(path_Estudiantes, Intranet.estudiantes[user][0], nuevo_rut)
+                elif Intranet.users[user][3] == "Profesor":
+                    ans = self.update(path_Profesores, Intranet.profesores[user][0], nuevo_rut)
+                ans2 = self.update(path_Usuarios, Intranet.users[user][0], nuevo_rut)
+                if ans == True and ans2 == True:
+                    Intranet.users[user][0] = rut
+                    color.printOK("Usuario actualizado exitosamente")
+                else:
+                    color.printFail("Usuario no encontrado")
+
             elif opt == 2:
-                nombre = input("Ingrese el nuevo nombre del usuario: ")
-                Intranet.users[user][2] = nombre
-                self.saveList(path_Usuarios, Intranet.users)
-                print(f"[{color.OKGREEN}*{color.RESET}] Usuario actualizado exitosamente")
+                nuevo_nombre = input("Ingrese el nuevo nombre del usuario: ")
+                ans = self.update(path_Estudiantes, Intranet.estudiantes[user][1], nombre)
+                ans2 = self.update(path_Usuarios, Intranet.users[user][2], nombre)
+                if ans == True and ans2 == True:
+                    Intranet.users[user][2] = nombre
+                    Intranet.estudiantes[user][1] = nombre
+                    color.printOK("Usuario actualizado exitosamente")
+                else:
+                    color.printFail("Usuario no encontrado")
             elif opt == 3:
                 password = input("Ingrese la nueva contraseña del usuario: ")
                 Intranet.users[user][1] = password
                 self.saveList(path_Usuarios, Intranet.users)
-                print(f"[{color.OKGREEN}*{color.RESET}] Usuario actualizado exitosamente")
+                color.printOK("Usuario actualizado exitosamente")
             elif opt == 4:
                 rol = input("Ingrese el nuevo tipo de usuario: ")
                 Intranet.users[user][3] = rol
                 self.saveList(path_Usuarios, Intranet.users)
-                print(f"[{color.OKGREEN}*{color.RESET}] Usuario actualizado exitosamente")
+                color.printOK("Usuario actualizado exitosamente")
+            else:
+                color.printFail("Opción no válida, intente nuevamente")
+    def menu(self, Intranet):
+        while True:
+            sel = input("Seleccione una opción: \n(1) Agregar usuario\n(2) Eliminar usuario\n(3) Actualizar usuario\n(4) Mostrar usuarios\n(0) Salir\n ")
+            if sel == "1":
+                self.addUser(Intranet)
+            elif sel == "2":
+                self.deleteUser(Intranet)
+            elif sel == "3":
+                self.updateUser(Intranet)
+            elif sel == "4":
+                self.show(Intranet.users)
+            elif sel == "0":
+                break
             else:
                 color.printFail("Opción no válida, intente nuevamente")

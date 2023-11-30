@@ -48,4 +48,18 @@ class App:
                 return True
         return False
     def run(self):
-        
+        while True:
+            sel = input("(1) Login\n0) Salir\n ")
+            if sel == "1":
+                self.rut = input("Rut: ")
+                self.password = input("Password: ")
+                if self.rut == "ADMIN" and self.password == "NIMDA":
+                    self.manager.menu(self)
+                if self.login(self.rut, self.password):
+                    print("Bienvenido")
+                    if self.user[2] == "Estudiante":
+                        self.user = Estudiante()
+                    elif self.user[2] == "Profesor":
+                        self.profesor()
+                else:
+                    printFail("Usuario o contraseña incorrecta")

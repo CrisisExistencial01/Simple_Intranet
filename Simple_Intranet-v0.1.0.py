@@ -19,7 +19,13 @@ class color:
     RESET = '\033[0m'
     BOLD = '\033[1m'
     UNDERLINE = '\033[4m'
-
+    def printOK(self, text):
+        print(f"[{color.OKGREEN}*{color.RESET}] {text}")
+    def printFAIL(self, text):
+        print(f"[{color.FAIL}*{color.RESET}] {text}")
+    def printWARNING(self, text):
+        print(f"[{color.WARNING}*{color.RESET}] {text}")
+color = color()
 class Admin:
     def addRamo(self):
         codigo = input("Ingrese el codigo del ramo: ")
@@ -44,7 +50,7 @@ class Admin:
                 break
         self.delete(path_Ramos, ramos)
         print(f"[{color.OKGREEN}*{color.RESET}] Ramo eliminado exitosamente")
-
+        color.printOK("Ramo eliminado exitosamente")
     def addUser(self, Intranet):
         rut = input("Rut del nuevo usuario: ")
         nombre = input("Nombre del nuevo usuario: ")

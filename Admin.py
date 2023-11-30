@@ -21,7 +21,10 @@ class color:
         print(f"[{color.WARNING}*{color.RESET}] {texto}")
     def printBlue(self, texto):
         print(f"[{color.BLUE}*{color.RESET}] {texto}")
+    def bold(self, texto):
+        return f"{color.BOLD}{texto}{color.RESET}"
 color = color()
+
 class Admin:
     # ADMINISTRACION DE ARCHIVOS CSV
     def find(self, parametro , lista):
@@ -50,12 +53,12 @@ class Admin:
             print(i)
     def delete(self, path, data):
         # Elimina un dato de un archivo csv
-        l = self.loadFile(path)
+        lista = self.loadFile(path)
         # l es la lista de tuplas retornadas por loadFile()
-        for ramo in l:
+        for ramo in lista:
             if ramo == data:
                 l.pop(ramo)
-        self.saveList(path, l)
+        self.saveList(path, lista)
     def update(self, path, data, new):
         # Actualiza un dato de un archivo csv
         lista = self.loadFile(path)
@@ -65,65 +68,45 @@ class Admin:
                 search = lista.index(dato)
                 lista[search] = new
         self.saveList(path, lista)
+        if lista[search] == new:
+            return True 
+        else:
+            return False
     def add(self, path, data):
         # Agrega un dato a un archivo csv
         lista = self.loadFile(path)
         # l es la lista de tuplas retornadas por loadFile()
-        l.append(data)
-        self.saveList(path, l)
+        lista.append(data)
+        self.saveList(path, lista)
         return l # retorna la lista actualizada
     # ADMINISTRACION DE USUARIOS
     def addUser(self, Intranet):
         rut = input("Rut del nuevo usuario: ")
         nombre = input("Nombre del nuevo usuario: ")
         rol = input("Seleccione el tipo de usuario: \n(1) Estudiante\n(2) Profesor: ")
-        lista = []
+        ramos = []
         if rol == "1":
             user = (rut, rut, nombre, "Estudiante")
-            data = (rut, nombre, lista[0:])
-            Intranet.estudiantes.append(data)
-            self.save(path_Estudiantes, data)
+            data = (rut, nombre, ramos[0:])
+            self.add(path_Estudiantes, data)
         elif rol == "2":
             user = (rut, rut, nombre, "Profesor")
-            data = (rut, nombre, lista[0:])
-            Intranet.profesores.append(data)
-            self.save(path_Profesores, data)
+            data = (rut, nombre, ramos[0:])
+            self.add(path_Profesores, data)
         else:
             print("Opción no válida, intente nuevamente")
         Intranet.users.append(user)
         self.save(path_Usuarios, user)
-        print(f"[{color.OKGREEN}*{color.RESET}]Usuario agregado exitosamente")
-    def addUser(self, Intranet):
-        rut = input("Rut del nuevo usuario: ")
-        nombre = input("Nombre del nuevo usuario: ")
-        rol = int(input("Seleccione el tipo de usuario: \n(1) Estudiante\n(2) Profesor: "))
-        if rol == 1:
-            user = (rut, rut, nombre, "Estudiante")
-            Intranet.estudiantes.append(user)
-            self.save(path_Estudiantes, user)
-            Intranet.users.append(user)
-            self.save(path_Usuarios, user)
-            print(f"[{color.OKGREEN}*{color.RESET}]Usuario agregado exitosamente")
+        color.printOK("Usuario agregado exitosamente")
 
-        elif rol == 2:
-            user = (rut, rut, nombre, "Profesor")
-            Intranet.profesores.append(user)
-            self.save(path_Profesores, user)
-            Intranet.users.append(user)
-            self.save(path_Usuarios, user)
-            print(f"[{color.OKGREEN}*{color.RESET}]Usuario agregado exitosamente")
-
-        else:
-            print(f"[{color.FAIL}*{color.RESET}] Opción no válida, intente nuevamente")
     def deleteUser(self, Intranet):
         rut = input("Ingrese el rut del usuario a eliminar: ")
-        user = self.find(rut, Intranet.users)
+        user = self.find(rut, Intranet.users) # retorna el indice del usuario en la lista
         if user == None:
             #print(f"[{color.FAIL}*{color.RESET}] Usuario no encontrado")
             color.printFail("Usuario no encontrado")
         else:
-            Intranet.users.pop(user)
-            self.saveList(path_Usuarios, Intranet.users)
+            self.delete(path_Usuarios, Intranet.users[user])
             print(f"[{color.OKGREEN}*{color.RESET}] Usuario eliminado exitosamente")
     def updateUser(self, Intranet):
         rut = input("Ingrese el rut del usuario a actualizar: ")
@@ -136,6 +119,7 @@ class Admin:
                 rut = input("Ingrese el nuevo rut del usuario: ")
                 Intranet.users[user][0] = rut
                 self.saveList(path_Usuarios, Intranet.users)
+                
                 print(f"[{color.OKGREEN}*{color.RESET}] Usuario actualizado exitosamente")
             elif opt == 2:
                 nombre = input("Ingrese el nuevo nombre del usuario: ")
@@ -152,4 +136,5 @@ class Admin:
                 Intranet.users[user][3] = rol
                 self.saveList(path_Usuarios, Intranet.users)
                 print(f"[{color.OKGREEN}*{color.RESET}] Usuario actualizado exitosamente")
-
+            else:
+                color.printFail("Opción no válida, intente nuevamente")

@@ -1,12 +1,12 @@
 import csv
+<<<<<<< HEAD
 from Admin import Admin
+=======
+from admin import Admin
+from db import DB
+>>>>>>> 4ca8cd5 (codigo refactorizado a medias)
 
 # PATHS
-path_Usuarios = "Data/Users/Users.csv"
-path_Estudiantes = "Data/Users/Estudiantes.csv"
-path_Profesores = "Data/Users/Profesores.csv"
-path_Ramos = "Data/Ramos/Ramos.csv"
-
 class color:
     HEADER = '\033[95m'
     BLUE = '\033[94m'
@@ -34,12 +34,6 @@ class App:
         self.manager = Admin()
         self.rut = None
         self.password = None
-        # Usuarios
-        self.users = self.manager.loadFile(path_Usuarios)
-        self.estudiantes = self.manager.loadFile(path_Estudiantes)
-        self.profesores = self.manager.loadFile(path_Profesores)
-        # Ramos
-        self.ramos = self.manager.loadFile(path_Ramos)
     # Funciones de la app
     def login(self, rut, password):
         for user in self.users:
@@ -48,6 +42,7 @@ class App:
                 return True
         return False
     def run(self):
+        db = db.DB()
         while True:
             sel = input("(1) Login\n0) Salir\n ")
             if sel == "1":

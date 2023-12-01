@@ -1,32 +1,28 @@
 import csv
-
+from db import DB
 path_Usuarios = "Data/Users/Users.csv"
 path_Estudiantes = "Data/Users/Estudiantes.csv"
 path_Profesores = "Data/Users/Profesores.csv"
 path_Ramos = "Data/Ramos/Ramos.csv"
-class color:
-    HEADER = '\033[95m'
-    BLUE = '\033[94m'
-    OKGREEN = '\033[32m'
-    WARNING = '\033[93m'
-    FAIL = '\033[31m'
-    RESET = '\033[0m'
-    BOLD = '\033[1m'
-    UNDERLINE = '\033[4m'
-    def printOK(self, texto):
-        print(f"[{color.OKGREEN}*{color.RESET}] {texto}")
-    def printFail(self, texto):
-        print(f"[{color.FAIL}*{color.RESET}] {texto}")
-    def printWarning(self, texto):
-        print(f"[{color.WARNING}*{color.RESET}] {texto}")
-    def printBlue(self, texto):
-        print(f"[{color.BLUE}*{color.RESET}] {texto}")
-    def bold(self, texto):
-        return f"{color.BOLD}{texto}{color.RESET}"
-color = color()
+db = DB()
 
+class Usuario:
+    def __init__(self, rut, password, nombre, rol):
+        self.rut = rut
+        self.password = password
+        self.nombre = nombre
+        self.rol = rol
+    def getRut(self):
+        return self.rut
+    def getPassword(self):
+        return self.password
+    def getNombre(self):
+        return self.nombre
+    def getRol(self):
+        return self.rol
 class Admin:
     # ADMINISTRACION DE ARCHIVOS CSV
+    # Ya no es necesario el manejo de archivos desde admin.py
     def find(self, parametro , lista):
         for i in lista: # i es una tupla
             if i[0] == parametro:
@@ -80,6 +76,8 @@ class Admin:
         self.saveList(path, lista)
         return l # retorna la lista actualizada
     # ADMINISTRACION DE USUARIOS
+    def addUser(self, ):
+
     def addUser(self, Intranet):
         rut = input("Rut del nuevo usuario: ")
         nombre = input("Nombre del nuevo usuario: ")

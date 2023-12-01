@@ -25,7 +25,6 @@ class color:
         print(f"[{color.FAIL}*{color.RESET}] {text}")
     def printWARNING(self, text):
         print(f"[{color.WARNING}*{color.RESET}] {text}")
-color = color()
 class Admin:
     def addRamo(self):
         codigo = input("Ingrese el codigo del ramo: ")
